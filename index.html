@@ -1,46 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1, shrink-to-fit=no"
-		/>
 
-		<title>Ajax quest challenge</title>
-		<link rel="icon" type="image/png" href="favicon.png" />
-		<link
-			rel="stylesheet"
-			href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
-		/>
-		<link
-			rel="stylesheet"
-			href="https://unpkg.com/bulma@0.7.5/css/bulma.min.css"
-		/>
-		<link
-			rel="stylesheet"
-			href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
-			integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
-			crossorigin="anonymous"
-		/>
-		<style></style>
-	</head>
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-	<body>
-		<section class="section">
-			<div class="container">
-				<h1 class="title">Simpson API</h1>
+	<title>Ajax quest challenge</title>
+	<link rel="icon" type="image/png" href="favicon.png" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+	<link rel="stylesheet" href="https://unpkg.com/bulma@0.7.5/css/bulma.min.css" />
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+		integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous" />
+	<style>
+		.QuoteCard {
+			display: flex;
+			padding: 1.25em;
+			width: 800px;
+			border: 1px solid #f8f8f8;
+			border-radius: 2px;
+			box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.15);
+			font-size: 1.2em;
+		}
 
-				<div class="content" id="simpson"></div>
-			</div>
-		</section>
+		.QuoteCard img {
+			display: flex;
+			max-height: 220px;
+			margin-right: 1.5rem;
+		}
 
-		<!-- We need to load axios first! -->
-		<script
-			src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"
-			integrity="sha256-S1J4GVHHDMiirir9qsXWc8ZWw74PHHafpsHp5PXtjTs="
-			crossorigin="anonymous"
-		></script>
-		<script></script>
-	</body>
+		.QuoteCard blockquote {
+			margin: 0 0 1rem 0;
+		}
+	</style>
+</head>
+
+<body>
+	<section class="section">
+		<div class="container">
+			<h1 class="title">The Simpsons API</h1>
+			<label for="sel">Quantity:</label>
+			<select id="sel" class="sel">
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
+			</select>
+			<input id="submit" type="submit" value="Get Quotes" />
+			<div class="content" id="simpson"></div>
+		</div>
+	</section>
+
+	<!-- We need to load axios first! -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"
+		integrity="sha256-S1J4GVHHDMiirir9qsXWc8ZWw74PHHafpsHp5PXtjTs=" crossorigin="anonymous"></script>
+	<script>
+
+		function getQuote(num) {
+			axios.get('https://simpsons-quotes-api.herokuapp.com/quotes?count=' + num)
+				.then(response => {
+					return response.data;
+				})
+				.then(simpsonsQuote => {
+					let simpsonsHtml = '';
+					simpsonsQuote.forEach((simpson, idx) => {
+						simpsonsHtml += `<figure class="QuoteCard">
+							${idx + 1}<img src=${simpson.image} alt=${simpson.character} />
+      <figcaption>
+        <blockquote>${simpson.quote}</blockquote>
+        <cite>${simpson.character}</cite>
+      </figcaption>
+    </figure>`;
+					})
+					document.querySelector('#simpson').innerHTML = simpsonsHtml;
+				})
+		}
+
+		const submitButton = document.querySelector('#submit');
+
+		submitButton.addEventListener("click", () => {
+			const sel = document.querySelector('#sel');
+			const selectedNum = sel.value;
+			getQuote(selectedNum);
+		})
+	</script>
+</body>
+
 </html>
